@@ -1,4 +1,4 @@
-//Classes from Felipe Zschornack and Maria Isabel V Lima
+
 public class Statistics {
 	SchedulingAlgorithm sa;
 	String header;
@@ -66,6 +66,15 @@ public class Statistics {
 		
 		avrgResponseTime = sum/sa.servedList.size();
 	}
+
+	public void getAvrgContextSwitch() {
+		float sum = 0;
+		for(int i=0; i<sa.servedList.size(); i++) {
+			sum += sa.servedList.get(i).contextSwitchCount;
+		}
+		
+		avrgResponseTime = sum/sa.servedList.size();
+	}
 	
 	public void getExecutedProcesses() {
 		executedProcesses = sa.servedList.size();
@@ -78,6 +87,7 @@ public class Statistics {
 		getAvrgTurnaround();
 		getAvrgWaitingTime();
 		getAvrgResponseTime();
+		getAvrgContextSwitch();
 		getExecutedProcesses();	
 	}
 	
@@ -91,6 +101,7 @@ public class Statistics {
         out += "Average turnaround: " + avrgTurnaround + "\n";
         out += "Average waiting time: " + avrgWaitingTime + "\n";
         out += "Average response time: " + avrgResponseTime + "\n";
+        out += "Average context switch: " + avrgContextSwitch + "\n";
         out += "Executed processes: " + executedProcesses + "\n";
         return out;
     }

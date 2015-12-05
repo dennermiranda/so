@@ -1,13 +1,12 @@
 import java.util.Collections;
 
 
-public class SJF extends SchedulingAlgorithm {
-	
-	SJF(String inputFile) {
+public class PriorityP extends SchedulingAlgorithm {
+	PriorityP(String inputFile) {
 		super(inputFile);
 	}
-	
-	//NON-PREEMPTIVE
+		
+	//PREEMPTIVE
 	public void schedule() {
 		readFile();
 		Collections.sort(processes, new ArrivalTimeComparator());
@@ -32,7 +31,7 @@ public class SJF extends SchedulingAlgorithm {
 			}
 			
 			if(!waitList.isEmpty() && !cpuBusy) { //there are processes waiting, then serve next process
-				Collections.sort(waitList, new RemainingBurstTimeComparator());
+				Collections.sort(waitList, new PriorityComparator());
 				currentProcess = acceptNextJob();			
 			} else if (pCount == processes.size() && !cpuBusy) { //there aren't any processes anymore
 				break;
@@ -41,5 +40,27 @@ public class SJF extends SchedulingAlgorithm {
 		}
 		stats.updateAll();
 		writeFile();
+	}
+	
+	@Override
+	public void processJob(Process p) {
+		// verify if a high priority process has arrived
+		Collections.sort(waitList, new PriorityComparator());
+
+		// if so, stop it
+		if (!waitList.isEmpty() && waitList.getFirst().priority < p.priority) {
+			p.contextSwitchCount += 1;
+			cpuBusy = false;
+			waitList.add(p);
+
+		} else { // segue com a vida
+			p.remainingBurstTime--;
+			if(p.remainingBurstTime == 0) { //if current process is served, it is removed from waitList and CPU becomes free
+				cpuBusy = false;
+				p.responseTime = cpuTick;
+				p.turnaround = cpuTick - p.arrivalTime;
+				servedList.add(p);
+			}
+		}
 	}
 }

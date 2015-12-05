@@ -1,12 +1,11 @@
 import java.util.Collections;
 
 
-public class SJF extends SchedulingAlgorithm {
-	
-	SJF(String inputFile) {
+public class Priority extends SchedulingAlgorithm {
+	Priority(String inputFile) {
 		super(inputFile);
 	}
-	
+		
 	//NON-PREEMPTIVE
 	public void schedule() {
 		readFile();
@@ -32,7 +31,7 @@ public class SJF extends SchedulingAlgorithm {
 			}
 			
 			if(!waitList.isEmpty() && !cpuBusy) { //there are processes waiting, then serve next process
-				Collections.sort(waitList, new RemainingBurstTimeComparator());
+				Collections.sort(waitList, new PriorityComparator());
 				currentProcess = acceptNextJob();			
 			} else if (pCount == processes.size() && !cpuBusy) { //there aren't any processes anymore
 				break;

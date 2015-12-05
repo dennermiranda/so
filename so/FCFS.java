@@ -1,6 +1,6 @@
 import java.util.Collections;
 
-//Classes from Felipe Zschornack and Maria Isabel V Lima
+
 public class FCFS extends SchedulingAlgorithm {
 
 	FCFS(String inputFile) {
@@ -16,6 +16,9 @@ public class FCFS extends SchedulingAlgorithm {
 		Process currentProcess = null;
 		
 		while(true) {
+			// update waiting time
+			for(int i = 0; i < waitList.size(); i++)
+				waitList.get(i).waitingTime += 1;
 			
 			//puts all processes that arrive at current cpuTick in waitList
 			while((pCount < processes.size()) && (processes.get(pCount).arrivalTime == cpuTick)) {

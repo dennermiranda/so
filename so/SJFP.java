@@ -1,6 +1,6 @@
 import java.util.Collections;
 
-//Classes from Felipe Zschornack and Maria Isabel V Lima
+
 public class SJFP extends SchedulingAlgorithm {
 	SJFP(String inputFile) {
 		super(inputFile);
@@ -15,26 +15,23 @@ public class SJFP extends SchedulingAlgorithm {
 		Process currentProcess = null;
 		
 		while(true) {
+			// update waiting time
+			for(int i = 0; i < waitList.size(); i++)
+				waitList.get(i).waitingTime += 1;
 			
 			//puts all processes that arrive at current cpuTick in waitList
 			while((pCount < processes.size()) && (processes.get(pCount).arrivalTime == cpuTick)) {
 				waitList.add(processes.get(pCount));
 				pCount++;
 			}
-			Collections.sort(waitList, new BurstTimeComparator());
 			
 			//if CPU is busy, continues serving current process
 			if(cpuBusy) {
-				if(!waitList.getFirst().equals(currentProcess)) { //a higher priority process has arrived
-					if(waitList.getFirst().burstTime < remainingBurstTime) {
-						cpuBusy = false;
-					}
-				} else {
-					processJob(currentProcess);
-				}
+				processJob(currentProcess);
 			}
 			
 			if(!waitList.isEmpty() && !cpuBusy) { //there are processes waiting, then serve next process
+				Collections.sort(waitList, new RemainingBurstTimeComparator());
 				currentProcess = acceptNextJob();			
 			} else if (pCount == processes.size() && !cpuBusy) { //there aren't any processes anymore
 				break;
@@ -43,5 +40,27 @@ public class SJFP extends SchedulingAlgorithm {
 		}
 		stats.updateAll();
 		writeFile();
+	}
+	
+	@Override
+	public void processJob(Process p) {
+		// verify if a high priority process has arrived
+		Collections.sort(waitList, new RemainingBurstTimeComparator());
+
+		// if so, stop it
+		if (!waitList.isEmpty() && waitList.getFirst().remainingBurstTime < p.remainingBurstTime) {
+			p.contextSwitchCount += 1;
+			cpuBusy = false;
+			waitList.add(p);
+
+		} else { // segue com a vida
+			p.remainingBurstTime--;
+			if(p.remainingBurstTime == 0) { //if current process is served, it is removed from waitList and CPU becomes free
+				cpuBusy = false;
+				p.responseTime = cpuTick;
+				p.turnaround = cpuTick - p.arrivalTime;
+				servedList.add(p);
+			}
+		}
 	}
 }

@@ -1,4 +1,4 @@
-//Classes from Felipe Zschornack and Maria Isabel V Lima
+
 public class Scheduler {
 
 	public static void main(String[] args) {
@@ -19,8 +19,10 @@ public class Scheduler {
 				new SJFP(args[0]).schedule();
 				break;
 			case "Priority":
+				new Priority(args[0]).schedule();
 				break;
 			case "PriorityP":
+				new PriorityP(args[0]).schedule();
 				break;
 			case "RR":
 				break;

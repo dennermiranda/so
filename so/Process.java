@@ -1,6 +1,6 @@
 import java.util.Comparator;
 
-//Classes from Felipe Zschornack and Maria Isabel V Lima
+
 public class Process {
 	int arrivalTime;
 	String pID;
@@ -12,6 +12,7 @@ public class Process {
 	int responseTime;
 	int throughput;
 	int contextSwitchCount;
+	int remainingBurstTime;
 
 	Process(String[] parts) {
 		this.arrivalTime = Integer.parseInt(parts[0]);
@@ -24,6 +25,7 @@ public class Process {
 		this.responseTime = 0;
 		this.throughput = 0;
 		this.contextSwitchCount = 0;
+		this.remainingBurstTime = burstTime;
 	}
 }
 
@@ -34,10 +36,10 @@ class ArrivalTimeComparator implements Comparator<Process> {
     }
 }
 
-class BurstTimeComparator implements Comparator<Process> {
+class RemainingBurstTimeComparator implements Comparator<Process> {
     @Override
     public int compare(Process p1, Process p2) {
-        return p1.burstTime - p2.burstTime;
+        return p1.remainingBurstTime - p2.remainingBurstTime;
     }
 }
 

@@ -6,11 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 
-//Classes from Felipe Zschornack and Maria Isabel V Lima
+
 public class SchedulingAlgorithm {
 	String name;
 	String inputFile;
-	int remainingBurstTime;
 	int cpuTick;
 	boolean cpuBusy;
 	LinkedList<Process> processes;
@@ -21,7 +20,6 @@ public class SchedulingAlgorithm {
 	SchedulingAlgorithm(String inputFile) {
 		this.name = getClass().getName();
 		this.inputFile = inputFile;
-		this.remainingBurstTime = 0;
 		this.cpuTick = 0;
 		this.cpuBusy = false;
 		this.processes = new LinkedList<Process>();
@@ -77,21 +75,20 @@ public class SchedulingAlgorithm {
 	}
 	
 	public void processJob(Process p) {
-		remainingBurstTime--;
-		if(remainingBurstTime == 0) { //if current process is served, it is removed from waitList and CPU becomes free
+		p.remainingBurstTime--;
+		if(p.remainingBurstTime == 0) { //if current process is served, it is removed from waitList and CPU becomes free
 			cpuBusy = false;
 			p.responseTime = cpuTick;
 			p.turnaround = cpuTick - p.arrivalTime;
 			servedList.add(p);
-			waitList.remove();
 		}
 	}
 
 	public Process acceptNextJob() {
 		cpuBusy = true;
 		Process p = waitList.getFirst();
-		p.waitingTime = cpuTick - p.arrivalTime;
-		remainingBurstTime = p.burstTime;
+		waitList.remove();
+		p.remainingBurstTime = p.burstTime;
 		
 		return p;
 	}
